@@ -7,9 +7,11 @@ Welcome to the memory banks for **task-board-lab**. This directory serves as the
 ## 📋 Quick Navigation
 
 ### [🏗️ Architecture](./architecture/)
+
 **System design, tech stack, and deployment patterns**
 
 Reference this section to understand:
+
 - System architecture and component organization
 - Tech stack decisions and rationale
 - Deployment strategies and infrastructure
@@ -19,9 +21,11 @@ Reference this section to understand:
 ---
 
 ### [📏 Conventions](./conventions/)
+
 **Coding standards, testing patterns, and best practices**
 
 Reference this section to maintain code quality:
+
 - Naming conventions and file organization
 - Code style and formatting rules
 - Testing strategies and patterns
@@ -32,9 +36,11 @@ Reference this section to maintain code quality:
 ---
 
 ### [📚 Domain](./domain/)
+
 **Business terms, rules, and personas**
 
 Reference this section to understand the product:
+
 - Business domain glossary and terminology
 - User personas and their goals
 - Business rules and constraints
@@ -45,9 +51,11 @@ Reference this section to understand the product:
 ---
 
 ### [🔄 Workflows](./workflows/)
+
 **Development, review, and deployment processes**
 
 Reference this section for process guidance:
+
 - Development workflow and branching strategy
 - Code review checklist and standards
 - Testing and quality assurance processes
@@ -58,9 +66,11 @@ Reference this section for process guidance:
 ---
 
 ### [👥 Roles](./roles/)
+
 **Role-specific context and responsibilities**
 
 Reference this section based on your role:
+
 - **Developer:** Implementation guidelines and expectations
 - **QA:** Testing strategy and acceptance criteria
 - **PM:** Product goals, priorities, and roadmap
@@ -79,8 +89,9 @@ Reference this section based on your role:
 ## 📖 Relationship to Specs
 
 The memory banks **complement** the specifications in `specs/`:
-- **Specs** define *what* to build (PRDs, Epics, Stories)
-- **Memory Banks** provide *how* to build it (architecture, conventions, processes)
+
+- **Specs** define _what_ to build (PRDs, Epics, Stories)
+- **Memory Banks** provide _how_ to build it (architecture, conventions, processes)
 
 Always trace features back to `specs/stories/` and verify acceptance criteria are met.
 
@@ -89,6 +100,7 @@ Always trace features back to `specs/stories/` and verify acceptance criteria ar
 ## ✏️ Contributing
 
 When adding new knowledge:
+
 - Keep entries focused and concise
 - Link to related documents where helpful
 - Update this README if adding a new section or subdirectory

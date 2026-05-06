@@ -26,7 +26,8 @@ The "board" is the core metaphor of the product. It reflects the Kanban workflow
 **Related Terms:**  
 [Kanban Column](#kanban-column), [Board State](#board-state), [Task](#task)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The board displays tasks across three columns: To Do, In Progress, and Done."  
 > "Users can filter the board by project tag to focus on one project at a time."
 
@@ -40,30 +41,32 @@ The complete, serializable snapshot of the Personal Task Board at any point in t
 **Context:**  
 Board state is the unit of persistence in the app. Because task-board-lab uses **local persistence** (no backend), the entire board state must fit within browser `localStorage` quota (~5-10MB, PRD §5.3). Understanding board state structure is critical for storage optimization and migration planning.
 
-**Data Model:**  
+**Data Model:**
+
 ```typescript
 interface BoardState {
-  version: number;                    // For forward-compatible migrations
-  tasks: Task[];                      // All tasks (flat array)
+  version: number; // For forward-compatible migrations
+  tasks: Task[]; // All tasks (flat array)
   columns: {
-    todo: TaskId[];                   // Task IDs in each column (for order)
+    todo: TaskId[]; // Task IDs in each column (for order)
     inProgress: TaskId[];
     done: TaskId[];
   };
   filter?: {
-    projectTag?: string;              // Active project filter
+    projectTag?: string; // Active project filter
   };
   ui?: {
-    selectedTaskId?: TaskId;          // Currently selected task (for keyboard)
+    selectedTaskId?: TaskId; // Currently selected task (for keyboard)
   };
-  lastUpdated: ISO8601;               // For debugging and syncing
+  lastUpdated: ISO8601; // For debugging and syncing
 }
 ```
 
 **Related Terms:**  
 [Local Persistence](#local-persistence), [Task](#task), [Project Tag](#project-tag)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "Board state is saved to localStorage after every task move."  
 > "If localStorage quota is exceeded, the app keeps the current board state in memory but cannot persist."
 
@@ -77,7 +80,8 @@ One of three fixed workflow stages in the Personal Task Board: **To Do**, **In P
 **Context:**  
 Columns represent the user's mental model of work: tasks start in To Do, move to In Progress when active, and complete in Done. This three-stage model is core to the Kanban metaphor and simplifies decision-making for solo developers (PRD FR-01). Columns are not customizable (out of scope, PRD §7.2).
 
-**Column Identifiers:**  
+**Column Identifiers:**
+
 - `"todo"` — Backlog and planned work
 - `"inProgress"` — Currently being worked on
 - `"done"` — Completed work
@@ -85,7 +89,8 @@ Columns represent the user's mental model of work: tasks start in To Do, move to
 **Related Terms:**  
 [Task](#task), [Board](#board-kanban-board-or-personal-task-board), [Workflow State](#workflow-state)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The user dragged a task from the To Do column to the In Progress column."  
 > "Tasks in the Done column can optionally be auto-archived after a period [Assumption, PRD Appendix A]."
 
@@ -98,17 +103,20 @@ The strategy of storing all task data exclusively in the user's browser using th
 
 **Context:**  
 Local persistence is a **hard project constraint** (AGENTS.md §5, PRD §5.2). It enables:
+
 - **Instant load times:** No network round-trip
 - **Offline availability:** Board works without internet
 - **Privacy:** Task data never leaves the browser
 - **Simplicity:** No ops, auth, or backend infrastructure
 
 **Trade-offs:**
+
 - Single-user only (multi-device sync explicitly out of scope, PRD §7.2)
 - Data loss if browser cache is cleared
 - Limited to ~5-10MB per browser origin (sufficient for up to 500 tasks, PRD §5.3)
 
 **Storage Details:**
+
 - **Key:** `taskboard:state` (or similar)
 - **Format:** JSON (serialized board state)
 - **Recovery:** On load error, fallback to empty board (UC-01 alternate flow)
@@ -116,7 +124,8 @@ Local persistence is a **hard project constraint** (AGENTS.md §5, PRD §5.2). I
 **Related Terms:**  
 [Board State](#board-state), [Task](#task)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The app uses localStorage for persistence; there is no backend API."  
 > "If localStorage quota is exceeded, the app shows an error and keeps state in-memory only."
 
@@ -130,7 +139,8 @@ Optional metadata attached to a **task** that categorizes the work by project or
 **Context:**  
 Project tags address the core user need: solo developers (Maya, Ethan) juggle 2-3 projects simultaneously and need to filter and focus their attention (PRD §1.3, §6, personas). Tags are free-text by default [Assumption, PRD Appendix A, Q3]. Tags can be added during task creation (US-004.01), edited later (US-004.02), and filtered via the **board** (US-004.03).
 
-**Tag Constraints (TBD):**  
+**Tag Constraints (TBD):**
+
 - Max length: 50 characters [Assumed]
 - Case-sensitive or insensitive? [Pending, PRD Appendix A, Q3]
 - Constrained list or free-text? [Pending, PRD Appendix A, Q3]
@@ -138,7 +148,8 @@ Project tags address the core user need: solo developers (Maya, Ethan) juggle 2-
 **Related Terms:**  
 [Task](#task), [Filter (Board Filter)](#filter-board-filter), [Board](#board-kanban-board-or-personal-task-board)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The task is tagged with project 'mobile-redesign'."  
 > "Users can filter the board to show only tasks tagged 'client-xyz'."  
 > "A task can have only one project tag [Assumption, pending PRD Appendix A, Q3]."
@@ -153,23 +164,25 @@ The atomic unit of work in the Personal Task Board. A task represents a discrete
 **Context:**  
 Tasks are the core domain entity. Users create tasks (PR-02), move them between **columns** (FR-03), edit metadata (US-004.02), and delete them (FR-02). Each task has a unique ID and timestamps for audit/recovery purposes.
 
-**Task Data Model:**  
+**Task Data Model:**
+
 ```typescript
 interface Task {
-  id: TaskId;                          // Unique identifier (UUID or nanoid)
-  title: string;                       // Required; max 255 chars [Assumed]
-  description?: string;                // Optional long-form notes
-  projectTag?: string;                 // Optional categorization
-  dueDate?: ISO8601;                   // Optional deadline
-  column: "todo" | "inProgress" | "done";  // Current workflow state
-  order: number;                       // Position within column (for ordering)
-  createdAt: ISO8601;                  // Task creation timestamp
-  updatedAt: ISO8601;                  // Last modification timestamp
-  status?: "active" | "archived";      // Future: for auto-archive [TBD]
+  id: TaskId; // Unique identifier (UUID or nanoid)
+  title: string; // Required; max 255 chars [Assumed]
+  description?: string; // Optional long-form notes
+  projectTag?: string; // Optional categorization
+  dueDate?: ISO8601; // Optional deadline
+  column: "todo" | "inProgress" | "done"; // Current workflow state
+  order: number; // Position within column (for ordering)
+  createdAt: ISO8601; // Task creation timestamp
+  updatedAt: ISO8601; // Last modification timestamp
+  status?: "active" | "archived"; // Future: for auto-archive [TBD]
 }
 ```
 
 **Task Lifecycle:**
+
 1. **Create** — User creates task in To Do column (FR-02, US-004.01)
 2. **Edit** — User updates title, project tag, due date (FR-02, US-004.02)
 3. **Move** — User moves task between columns via drag-drop or keyboard (FR-03, FR-04)
@@ -180,7 +193,8 @@ interface Task {
 **Related Terms:**  
 [Column](#column-aka-kanban-column-or-workflow-column), [Board State](#board-state), [Workflow State](#workflow-state), [Project Tag](#project-tag)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "A task titled 'Implement login form' is in the In Progress column."  
 > "The task is tagged with 'project-alpha' and due on 2026-05-15."  
 > "Moving the task to Done triggers a localStorage persist."
@@ -196,6 +210,7 @@ The current status of a **task** within the Personal Task Board workflow. Workfl
 Workflow state is the primary dimension for task filtering and visualization. It answers the question: "What is this task's current status?" A task always has exactly one workflow state at any time.
 
 **Valid Workflow States:**
+
 - **To Do** — Planned but not yet started
 - **In Progress** — Currently being worked on
 - **Done** — Complete and closed
@@ -203,7 +218,8 @@ Workflow state is the primary dimension for task filtering and visualization. It
 **Related Terms:**  
 [Task](#task), [Column](#column-aka-kanban-column-or-workflow-column), [Board](#board-kanban-board-or-personal-task-board)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The task's workflow state is 'In Progress'."  
 > "Changing workflow state requires moving the task to a different column."  
 > "The success metric tracks transitions to Done state weekly (PRD §6)."
@@ -219,9 +235,11 @@ A mechanism to display only **tasks** matching a specific **project tag**, reduc
 Filtering directly supports the core user goal: solo developers manage 2-3 projects and need to switch focus without losing visibility of other work. Filters are optional and can be cleared (US-004.04). Filter preferences are persisted across sessions (US-004.05).
 
 **Filter Types (Current):**
+
 - **Project tag filter:** Show only tasks with a specific project tag [FR-06, US-004.03]
 
 **Filter Interactions:**
+
 - Apply filter — Click project tag or use keyboard shortcut (FR-04)
 - Clear filter — Show all tasks regardless of tag (US-004.04)
 - Restore filter preference — Load saved filter on app reload (US-004.05)
@@ -229,7 +247,8 @@ Filtering directly supports the core user goal: solo developers manage 2-3 proje
 **Related Terms:**  
 [Project Tag](#project-tag), [Board](#board-kanban-board-or-personal-task-board), [Board State](#board-state)
 
-**Example Usage:**  
+**Example Usage:**
+
 > "The user applied a filter to show only tasks tagged 'client-redesign'."  
 > "Clearing the filter reveals all tasks across all projects."  
 > "The app restores the user's last active filter on reload."
@@ -243,7 +262,8 @@ Filtering directly supports the core user goal: solo developers manage 2-3 proje
 **Definition:**  
 A visual workflow management system that organizes work into discrete columns representing workflow stages. In task-board-lab, the model is simplified to three columns: To Do, In Progress, Done.
 
-**Rationale for task-board-lab:**  
+**Rationale for task-board-lab:**
+
 - Simple enough for solo developers to adopt without training
 - Aligns with natural work progression
 - Enables visual "at a glance" status clarity
@@ -257,11 +277,13 @@ A visual workflow management system that organizes work into discrete columns re
 **Definition:**  
 The work pattern of a single developer managing multiple projects simultaneously, characterized by frequent context switching, need for quick task visibility, and preference for lightweight tools.
 
-**Personas:**  
+**Personas:**
+
 - **Maya** — Freelance full-stack developer balancing client and personal work
 - **Ethan** — Indie SaaS founder shipping alone, values keyboard efficiency
 
-**Key Needs (from PRD):**  
+**Key Needs (from PRD):**
+
 - Reduce planning overhead (25 min → 10 min per day)
 - No setup complexity
 - Fast keyboard-driven interactions
@@ -279,7 +301,8 @@ The development methodology used in task-board-lab (AGENTS.md §1): all code is 
 **Specification Chain:**  
 PRD → Epic → Story → Code
 
-**Key Rule:**  
+**Key Rule:**
+
 > "No code without a spec. No spec without a parent. No deviation without a comment."
 
 **Related to:** AGENTS.md, project planning, quality assurance
@@ -290,21 +313,21 @@ PRD → Epic → Story → Code
 
 ### Pending Clarifications (from PRD Appendix A)
 
-| Item | Question | Status | Impact |
-|---|---|---|---|
-| **Auto-archive timing** | Should completed tasks auto-archive after a configurable period? | Pending | Affects Done column UX and storage management |
-| **Keyboard shortcut schema** | What exact keyboard shortcuts on macOS vs Windows? | Pending | Affects FR-04 implementation and US-003 stories |
-| **Project tag constraints** | Free-text or constrained list? | Pending | Affects Project Tag data model and validation |
+| Item                         | Question                                                         | Status  | Impact                                          |
+| ---------------------------- | ---------------------------------------------------------------- | ------- | ----------------------------------------------- |
+| **Auto-archive timing**      | Should completed tasks auto-archive after a configurable period? | Pending | Affects Done column UX and storage management   |
+| **Keyboard shortcut schema** | What exact keyboard shortcuts on macOS vs Windows?               | Pending | Affects FR-04 implementation and US-003 stories |
+| **Project tag constraints**  | Free-text or constrained list?                                   | Pending | Affects Project Tag data model and validation   |
 
 ### Implicit Assumptions
 
-| Assumption | Basis | Risk |
-|---|---|---|
-| Users manage 2-3 projects | Personas (PRD §2) | Lower limit might reduce filter value |
-| Task volume < 500 items | Performance target (PRD §5.1, §5.3) | Larger boards may need virtual scrolling |
+| Assumption                     | Basis                                   | Risk                                                        |
+| ------------------------------ | --------------------------------------- | ----------------------------------------------------------- |
+| Users manage 2-3 projects      | Personas (PRD §2)                       | Lower limit might reduce filter value                       |
+| Task volume < 500 items        | Performance target (PRD §5.1, §5.3)     | Larger boards may need virtual scrolling                    |
 | Users are keyboard-comfortable | Personas technical proficiency (PRD §2) | Keyboard shortcuts may be underused by less technical users |
-| localStorage quota sufficient | ~5-10MB typical | Data loss if quota exceeded (mitigated by error handling) |
-| Modern desktop browsers | PRD §3 UC-01, §7.3 | Mobile or legacy browser users unsupported |
+| localStorage quota sufficient  | ~5-10MB typical                         | Data loss if quota exceeded (mitigated by error handling)   |
+| Modern desktop browsers        | PRD §3 UC-01, §7.3                      | Mobile or legacy browser users unsupported                  |
 
 ---
 

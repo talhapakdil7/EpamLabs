@@ -73,14 +73,15 @@ hotfix/v[version]-[description]
 
 ### 2.2 Branch Naming Conventions
 
-| Type | Pattern | Example | Notes |
-|---|---|---|---|
-| Feature | `feature/us-[###]-[slug]` | `feature/us-004.01-add-project-tag` | Must reference story ID |
-| Bug | `bugfix/[description]` | `bugfix/localStorage-migration-error` | Lowercase, kebab-case |
-| Hotfix | `hotfix/v[version]-[description]` | `hotfix/v1.0.1-filter-reset-crash` | Include version tag |
-| Chore | `chore/[description]` | `chore/upgrade-vite-dependencies` | Non-feature work |
+| Type    | Pattern                           | Example                               | Notes                   |
+| ------- | --------------------------------- | ------------------------------------- | ----------------------- |
+| Feature | `feature/us-[###]-[slug]`         | `feature/us-004.01-add-project-tag`   | Must reference story ID |
+| Bug     | `bugfix/[description]`            | `bugfix/localStorage-migration-error` | Lowercase, kebab-case   |
+| Hotfix  | `hotfix/v[version]-[description]` | `hotfix/v1.0.1-filter-reset-crash`    | Include version tag     |
+| Chore   | `chore/[description]`             | `chore/upgrade-vite-dependencies`     | Non-feature work        |
 
 **Rules:**
+
 - Use **lowercase** and **kebab-case**.
 - Include **story ID** for features (traceability).
 - Keep names **short** but **descriptive** (< 50 chars).
@@ -89,6 +90,7 @@ hotfix/v[version]-[description]
 ### 2.3 Branch Protection
 
 **Main branch protections:**
+
 ```
 main
 ├─ Require code review (1+ approver)
@@ -98,6 +100,7 @@ main
 ```
 
 **Develop branch protections:**
+
 ```
 develop
 ├─ Require code review (1+ approver)
@@ -114,6 +117,7 @@ develop
 **Before opening a PR:**
 
 1. **Verify story status**
+
    ```bash
    # Check that your story is Ready or In Progress
    # Reference: specs/stories/us-###-[slug].md
@@ -121,6 +125,7 @@ develop
    ```
 
 2. **Ensure code quality**
+
    ```bash
    npm run lint       # ESLint (no errors)
    npm run type-check # TypeScript strict (no errors)
@@ -129,10 +134,11 @@ develop
    ```
 
 3. **Update commit history**
+
    ```bash
    # Interactive rebase to clean up commits
    git rebase -i origin/develop
-   
+
    # Squash or reorder commits so story is atomic
    # Goal: 1-3 commits per logical story unit
    ```
@@ -141,23 +147,28 @@ develop
 
    ```markdown
    ## Story Reference
+
    Resolves: US-###-[slug]
    Story URL: specs/stories/us-###-[slug].md
-   
+
    ## Description
+
    Brief summary of what this PR implements. Link to epic if helpful.
-   
+
    ## Acceptance Criteria
+
    - [ ] AC 1: [from story]
    - [ ] AC 2: [from story]
    - [ ] AC 3: [from story]
-   
+
    ## Testing
+
    - [ ] Unit tests added (≥80% coverage)
    - [ ] Manual testing on browser completed
    - [ ] Edge cases tested (see Technical Notes)
-   
+
    ## Checklist
+
    - [ ] No new `any` types
    - [ ] All localStorage I/O via useLocalStorage hook
    - [ ] No module-level side effects
@@ -216,17 +227,20 @@ Focus on **intent** and **correctness**, not style (linter handles style). Be co
 **Required approval:** 1 approver minimum (can be peer or lead)
 
 **Review feedback:**
+
 - Use GitHub suggestion feature for small fixes (reviewee can commit directly)
 - Request changes only if blocking
 - Comment praise for good solutions (morale boost)
 
 **Example review comment (good):**
+
 ```
 ❌ This uses any type for task, but we need strict typing.
 ✅ Can you add a type annotation? E.g., task: Task
 ```
 
 **Example review comment (bad):**
+
 ```
 ❌ This is bad code.
 ```
@@ -259,15 +273,16 @@ Target Split (effort + ROI):
 
 ### 4.2 Coverage Requirements
 
-| Category | Minimum | Rationale |
-|---|---|---|
-| **Touched logic** | 80% | Acceptable risk/effort for features |
-| **Persistence (useLocalStorage)** | 90% | Critical; storage failures break app |
-| **State management** | 85% | Core business logic |
-| **Utilities (pure functions)** | 85% | Deterministic; easy to test |
-| **Components** | 70% | UI testing is slower; prioritize logic |
+| Category                          | Minimum | Rationale                              |
+| --------------------------------- | ------- | -------------------------------------- |
+| **Touched logic**                 | 80%     | Acceptable risk/effort for features    |
+| **Persistence (useLocalStorage)** | 90%     | Critical; storage failures break app   |
+| **State management**              | 85%     | Core business logic                    |
+| **Utilities (pure functions)**    | 85%     | Deterministic; easy to test            |
+| **Components**                    | 70%     | UI testing is slower; prioritize logic |
 
-**Enforcement:**  
+**Enforcement:**
+
 - PR blocks if coverage drops below target on touched files
 - Coverage report uploaded to PR artifacts
 - `npm run test -- --coverage` to check locally
@@ -275,6 +290,7 @@ Target Split (effort + ROI):
 ### 4.3 Testing Standards
 
 **Test file location:**
+
 ```
 src/
 ├── components/
@@ -291,11 +307,11 @@ src/
 **Test structure (Vitest + React Testing Library):**
 
 ```typescript
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useLocalStorage } from './useLocalStorage';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useLocalStorage } from "./useLocalStorage";
 
-describe('useLocalStorage', () => {
+describe("useLocalStorage", () => {
   // Setup
   beforeEach(() => {
     localStorage.clear();
@@ -306,41 +322,46 @@ describe('useLocalStorage', () => {
   });
 
   // Happy path
-  it('should persist value to localStorage', () => {
-    const { result } = renderHook(() => useLocalStorage<string>('key', 'initial'));
-    
+  it("should persist value to localStorage", () => {
+    const { result } = renderHook(() =>
+      useLocalStorage<string>("key", "initial"),
+    );
+
     act(() => {
-      result.current.setValue('updated');
+      result.current.setValue("updated");
     });
-    
-    expect(localStorage.getItem('key')).toBe(JSON.stringify('updated'));
+
+    expect(localStorage.getItem("key")).toBe(JSON.stringify("updated"));
   });
 
   // Edge case
-  it('should handle corrupted JSON gracefully', () => {
-    localStorage.setItem('key', 'invalid-json');
-    
-    const { result } = renderHook(() => useLocalStorage<string>('key', 'fallback'));
-    
-    expect(result.current.value).toBe('fallback');
+  it("should handle corrupted JSON gracefully", () => {
+    localStorage.setItem("key", "invalid-json");
+
+    const { result } = renderHook(() =>
+      useLocalStorage<string>("key", "fallback"),
+    );
+
+    expect(result.current.value).toBe("fallback");
   });
 
   // Error case
-  it('should recover when localStorage quota exceeded', () => {
-    const { result } = renderHook(() => useLocalStorage<string>('key', ''));
-    
-    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new DOMException('QuotaExceededError');
+  it("should recover when localStorage quota exceeded", () => {
+    const { result } = renderHook(() => useLocalStorage<string>("key", ""));
+
+    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("QuotaExceededError");
     });
-    
+
     expect(() => {
-      act(() => result.current.setValue('large'));
+      act(() => result.current.setValue("large"));
     }).not.toThrow();
   });
 });
 ```
 
 **Test naming:**
+
 - ✅ `should [verb] when [condition]` — "should save task when title is valid"
 - ✅ `should throw [error] when [condition]` — "should throw error when ID not found"
 - ❌ `test 1`, `works`, `component test`
@@ -401,7 +422,7 @@ jobs:
 
   deploy:
     needs: test-and-build
-    if: github.ref == 'refs/heads/main'  # Production only
+    if: github.ref == 'refs/heads/main' # Production only
     runs-on: ubuntu-latest
     steps:
       - run: npm run build
@@ -410,30 +431,31 @@ jobs:
 
 **Pipeline Stages:**
 
-| Stage | Command | Pass/Fail | Time |
-|---|---|---|---|
-| **Lint** | `npm run lint` | Fail on error | ~30s |
-| **Type Check** | `npm run type-check` | Fail on error | ~45s |
-| **Tests** | `npm run test` | Fail if < 80% coverage | ~60s |
-| **Build** | `npm run build` | Fail on error | ~60s |
-| **Bundle Analysis** | Report size delta | Warn (no block) | ~15s |
-| **Deploy** | Push to hosting | Fail on error | ~90s |
+| Stage               | Command              | Pass/Fail              | Time |
+| ------------------- | -------------------- | ---------------------- | ---- |
+| **Lint**            | `npm run lint`       | Fail on error          | ~30s |
+| **Type Check**      | `npm run type-check` | Fail on error          | ~45s |
+| **Tests**           | `npm run test`       | Fail if < 80% coverage | ~60s |
+| **Build**           | `npm run build`      | Fail on error          | ~60s |
+| **Bundle Analysis** | Report size delta    | Warn (no block)        | ~15s |
+| **Deploy**          | Push to hosting      | Fail on error          | ~90s |
 
 **Total pipeline time:** ~5 minutes (typical)
 
 ### 5.2 Deployment Environments
 
-| Environment | Branch | Hosting | URL | When |
-|---|---|---|---|---|
-| **Production** | `main` | Vercel/Netlify/S3 | `https://taskboard.example.com` | Auto on main merge |
-| **Staging** | `develop` | Vercel/Netlify/S3 | `https://staging.taskboard.example.com` | Auto on develop merge (optional) |
-| **Local** | Any feature branch | Localhost:5173 | `http://localhost:5173` | `npm run dev` |
+| Environment    | Branch             | Hosting           | URL                                     | When                             |
+| -------------- | ------------------ | ----------------- | --------------------------------------- | -------------------------------- |
+| **Production** | `main`             | Vercel/Netlify/S3 | `https://taskboard.example.com`         | Auto on main merge               |
+| **Staging**    | `develop`          | Vercel/Netlify/S3 | `https://staging.taskboard.example.com` | Auto on develop merge (optional) |
+| **Local**      | Any feature branch | Localhost:5173    | `http://localhost:5173`                 | `npm run dev`                    |
 
 ### 5.3 Deployment Checklist
 
 Before deploying to production:
 
 **Story completion:**
+
 - [ ] All acceptance criteria met and demonstrable
 - [ ] ≥80% test coverage on touched logic
 - [ ] No TypeScript errors
@@ -441,17 +463,20 @@ Before deploying to production:
 - [ ] Code reviewed and approved
 
 **Data & Storage:**
+
 - [ ] localStorage migration logic tested (if data model changed)
 - [ ] Backwards compatibility verified (old task data loads without error)
 - [ ] No data loss scenarios
 
 **Quality:**
+
 - [ ] Smoke test: Create task → Move to Done → Refresh → Verify persists
 - [ ] localStorage quota scenario tested (if relevant)
 - [ ] Error messages are user-friendly
 - [ ] No console errors in browser
 
 **Documentation:**
+
 - [ ] Story marked "Done" in specs/
 - [ ] Release notes updated (if applicable)
 - [ ] Known issues documented
@@ -479,6 +504,7 @@ git push origin main  # Triggers CI/CD deployment
 Because all data lives in user's browser (`localStorage`), rollback has no database corruption risk. Users on old version continue working; no forced updates.
 
 **Communication:**
+
 ```
 When rolling back:
 1. Alert team in Slack/Discord: "Rolling back to [commit] due to [issue]"
@@ -487,6 +513,7 @@ When rolling back:
 ```
 
 **Post-rollback:**
+
 1. Investigate root cause
 2. Create bugfix branch: `bugfix/[description]`
 3. Fix issue + add tests
@@ -554,24 +581,30 @@ git branch -d release/v1.1.0
 **Release Date:** 2026-06-15
 
 ## Features
+
 - ✨ Add project tag filtering (US-004.03)
 - ✨ Restore filter preference on app reload (US-004.05)
 
 ## Bug Fixes
+
 - 🐛 Fix localStorage quota error recovery (bugfix/quota-error)
 - 🐛 Prevent task corruption on concurrent updates
 
 ## Performance
+
 - ⚡ Reduce bundle size by 15KB (optimization pass)
 - ⚡ Improve drag-drop responsiveness (<50ms latency)
 
 ## Breaking Changes
+
 None
 
 ## Known Issues
+
 - Drag-drop not supported on iOS Safari < 13 (workaround: use keyboard)
 
 ## Migration Guide
+
 No migrations needed. Old task data loads automatically.
 ```
 
@@ -584,6 +617,7 @@ No migrations needed. Old task data loads automatically.
 **After pushing to production:**
 
 1. **Check error logs** (first 30 minutes)
+
    ```bash
    # Monitor browser console (if telemetry enabled)
    # Check for new errors or warnings

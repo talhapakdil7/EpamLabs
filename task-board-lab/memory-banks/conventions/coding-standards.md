@@ -10,6 +10,7 @@
 ## 1. Overview
 
 This document establishes code quality standards for task-board-lab. All code must adhere to these standards to ensure:
+
 - **Readability:** Easy onboarding for new contributors
 - **Maintainability:** Clear intent and minimal cognitive load
 - **Type Safety:** Strict TypeScript prevents runtime errors
@@ -24,25 +25,25 @@ This document establishes code quality standards for task-board-lab. All code mu
 
 ### 2.1 Spec Files
 
-| Type | Pattern | Example | Notes |
-|---|---|---|---|
-| PRD | `prd-[slug].md` | `prd-personal-task-board.md` | Kebab-case slug, 2-3 words |
-| Epic | `epic-[###]-[slug].md` | `epic-001-board-foundation.md` | Zero-padded 3-digit ID |
-| Story | `us-[###]-[slug].md` | `us-004.01-add-project-tag-on-create.md` | Zero-padded, support sub-stories |
-| Task/Commit | Reference story ID | `us-004.01: Add project tag input` | Link every commit to a story |
+| Type        | Pattern                | Example                                  | Notes                            |
+| ----------- | ---------------------- | ---------------------------------------- | -------------------------------- |
+| PRD         | `prd-[slug].md`        | `prd-personal-task-board.md`             | Kebab-case slug, 2-3 words       |
+| Epic        | `epic-[###]-[slug].md` | `epic-001-board-foundation.md`           | Zero-padded 3-digit ID           |
+| Story       | `us-[###]-[slug].md`   | `us-004.01-add-project-tag-on-create.md` | Zero-padded, support sub-stories |
+| Task/Commit | Reference story ID     | `us-004.01: Add project tag input`       | Link every commit to a story     |
 
 **Rationale:** Consistent ID schemes enable easy tracing and search across specs.
 
 ### 2.2 React Components
 
-| Type | Pattern | Example | Context |
-|---|---|---|---|
-| Component (file) | `PascalCase.tsx` | `TaskCard.tsx` | Reusable, standalone component |
-| Component (folder) | `PascalCase/index.tsx` | `TaskBoard/index.tsx` | Complex component with internal utils |
-| Props interface | `[ComponentName]Props` | `TaskCardProps` | Always explicit, no implicit `any` |
-| State interface | `[FeatureName]State` | `BoardState` | Reducer state shape |
-| Event handler | `handle[Event]` | `handleTaskDrop`, `handleAddClick` | Prefix all handlers with `handle` |
-| Callback prop | `on[Event]` | `onTaskMove`, `onFilterChange` | Callback props always start with `on` |
+| Type               | Pattern                | Example                            | Context                               |
+| ------------------ | ---------------------- | ---------------------------------- | ------------------------------------- |
+| Component (file)   | `PascalCase.tsx`       | `TaskCard.tsx`                     | Reusable, standalone component        |
+| Component (folder) | `PascalCase/index.tsx` | `TaskBoard/index.tsx`              | Complex component with internal utils |
+| Props interface    | `[ComponentName]Props` | `TaskCardProps`                    | Always explicit, no implicit `any`    |
+| State interface    | `[FeatureName]State`   | `BoardState`                       | Reducer state shape                   |
+| Event handler      | `handle[Event]`        | `handleTaskDrop`, `handleAddClick` | Prefix all handlers with `handle`     |
+| Callback prop      | `on[Event]`            | `onTaskMove`, `onFilterChange`     | Callback props always start with `on` |
 
 **Examples:**
 
@@ -57,19 +58,20 @@ const onFilterChange = (projectTag: string) => {
 };
 
 // ❌ BAD: Ambiguous, no prefix
-const taskDrop = () => { };
-const filter = () => { };
+const taskDrop = () => {};
+const filter = () => {};
 ```
 
 ### 2.3 Custom Hooks
 
-| Type | Pattern | Example |
-|---|---|---|
-| Hook (file) | `use[Name].ts` | `useLocalStorage.ts` |
-| Hook (function) | `use[Name]()` | `useLocalStorage()` |
-| Return state | `[state, setState]` or `{ state, action }` | `const [tasks, setTasks] = useBoard()` |
+| Type            | Pattern                                    | Example                                |
+| --------------- | ------------------------------------------ | -------------------------------------- |
+| Hook (file)     | `use[Name].ts`                             | `useLocalStorage.ts`                   |
+| Hook (function) | `use[Name]()`                              | `useLocalStorage()`                    |
+| Return state    | `[state, setState]` or `{ state, action }` | `const [tasks, setTasks] = useBoard()` |
 
 **Rules:**
+
 - Always start with `use` prefix (React convention).
 - Return explicit types, never `any`.
 - Document with JSDoc if return type is complex.
@@ -78,9 +80,11 @@ const filter = () => { };
 
 ```typescript
 // ✅ GOOD
-export function useLocalStorage<T>(key: string): [T | null, (value: T) => void] {
+export function useLocalStorage<T>(
+  key: string,
+): [T | null, (value: T) => void] {
   const [value, setValue] = useState<T | null>(null);
-  
+
   return [value, setValue];
 }
 
@@ -92,12 +96,12 @@ export function useLocalStorage(key) {
 
 ### 2.4 Utilities & Helpers
 
-| Type | Pattern | Example |
-|---|---|---|
-| Pure function | `camelCase` | `formatDate`, `validateTask`, `calculateDueIn` |
-| Constant | `UPPER_SNAKE_CASE` | `DEFAULT_COLUMN_COUNT`, `MAX_TASK_TITLE_LENGTH` |
-| Enum | `PascalCase` | `TaskStatus`, `SortOrder` |
-| Type alias | `PascalCase` | `TaskId`, `ColumnType` |
+| Type          | Pattern            | Example                                         |
+| ------------- | ------------------ | ----------------------------------------------- |
+| Pure function | `camelCase`        | `formatDate`, `validateTask`, `calculateDueIn`  |
+| Constant      | `UPPER_SNAKE_CASE` | `DEFAULT_COLUMN_COUNT`, `MAX_TASK_TITLE_LENGTH` |
+| Enum          | `PascalCase`       | `TaskStatus`, `SortOrder`                       |
+| Type alias    | `PascalCase`       | `TaskId`, `ColumnType`                          |
 
 **Examples:**
 
@@ -106,21 +110,21 @@ export function useLocalStorage(key) {
 const MAX_TASK_TITLE_LENGTH = 255;
 
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US');
+  return date.toLocaleDateString("en-US");
 }
 
 enum TaskStatus {
-  Todo = 'todo',
-  InProgress = 'inProgress',
-  Done = 'done',
+  Todo = "todo",
+  InProgress = "inProgress",
+  Done = "done",
 }
 
-type TaskId = string & { readonly __brand: 'TaskId' };
+type TaskId = string & { readonly __brand: "TaskId" };
 
 // ❌ BAD: Inconsistent naming
 const maxTaskTitleLength = 255;
-function FormatDate() { }
-const TASK_STATUS = { todo: 'todo' };
+function FormatDate() {}
+const TASK_STATUS = { todo: "todo" };
 ```
 
 ### 2.5 File & Folder Organization
@@ -170,6 +174,7 @@ src/
 ```
 
 **Folder Naming Rules:**
+
 - Feature folders are lowercase (`board/`, `tasks/`).
 - Component files are PascalCase (`TaskCard.tsx`).
 - Hook/utility files are camelCase (`useLocalStorage.ts`, `formatDate.ts`).
@@ -198,16 +203,16 @@ interface TaskCardState {
 // Component
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onMove, onDelete }) => {
   const [state, setState] = useState<TaskCardState>({ isEditing: false });
-  
+
   const handleEdit = useCallback(() => {
     setState({ isEditing: true });
   }, []);
-  
+
   const handleSave = useCallback((title: string) => {
     // Save logic
     setState({ isEditing: false });
   }, []);
-  
+
   return (
     <div className={styles.card}>
       {/* JSX */}
@@ -220,6 +225,7 @@ export default TaskCard;
 ```
 
 **Organization Rules:**
+
 1. Imports (external, then internal)
 2. Type definitions (if small)
 3. Constants
@@ -233,7 +239,7 @@ export default TaskCard;
 ```typescript
 // ✅ GOOD: Clear flow
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 // Type definitions
 interface UseLocalStorageReturn<T> {
@@ -245,7 +251,7 @@ interface UseLocalStorageReturn<T> {
 // Hook implementation
 export function useLocalStorage<T>(key: string): UseLocalStorageReturn<T> {
   const [value, setValue] = useState<T | null>(null);
-  
+
   // Initialize from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(key);
@@ -257,27 +263,31 @@ export function useLocalStorage<T>(key: string): UseLocalStorageReturn<T> {
       }
     }
   }, [key]);
-  
+
   // Persist to localStorage
-  const handleSetValue = useCallback((newValue: T) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(newValue));
-      setValue(newValue);
-    } catch (error) {
-      console.error(`Failed to persist to localStorage[${key}]:`, error);
-    }
-  }, [key]);
-  
+  const handleSetValue = useCallback(
+    (newValue: T) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(newValue));
+        setValue(newValue);
+      } catch (error) {
+        console.error(`Failed to persist to localStorage[${key}]:`, error);
+      }
+    },
+    [key],
+  );
+
   const handleClear = useCallback(() => {
     localStorage.removeItem(key);
     setValue(null);
   }, [key]);
-  
+
   return { value, setValue: handleSetValue, clear: handleClear };
 }
 ```
 
 **Hook Rules:**
+
 - Return explicit interface, never implicit `any` or tuple.
 - Use `useCallback` for stable function references.
 - Handle errors gracefully (don't throw in hooks).
@@ -299,6 +309,7 @@ features/board/
 ```
 
 **Separation of Concerns:**
+
 - **Container:** Handles state, actions, side effects
 - **Presentational:** Pure render logic, no business logic
 - **Hook:** Encapsulates state management
@@ -311,14 +322,14 @@ features/board/
 
 ### 4.1 Type Requirements (Strict Mode Mandatory)
 
-| Item | Rule | Example |
-|---|---|---|
-| **Function params** | All must be explicitly typed | `function add(a: number, b: number): number` |
-| **Function return** | Always explicit (no implicit `any`) | `(): Promise<Task[]>` |
-| **Component props** | Always via `Props` interface | `TaskCardProps` |
-| **State** | Always via interface or type | `useState<TaskState>()` |
-| **Event handlers** | Typed via event parameter | `(e: React.ChangeEvent<HTMLInputElement>)` |
-| **Any type** | Forbidden | Use `unknown` if truly dynamic, then narrow |
+| Item                | Rule                                | Example                                      |
+| ------------------- | ----------------------------------- | -------------------------------------------- |
+| **Function params** | All must be explicitly typed        | `function add(a: number, b: number): number` |
+| **Function return** | Always explicit (no implicit `any`) | `(): Promise<Task[]>`                        |
+| **Component props** | Always via `Props` interface        | `TaskCardProps`                              |
+| **State**           | Always via interface or type        | `useState<TaskState>()`                      |
+| **Event handlers**  | Typed via event parameter           | `(e: React.ChangeEvent<HTMLInputElement>)`   |
+| **Any type**        | Forbidden                           | Use `unknown` if truly dynamic, then narrow  |
 
 **Examples:**
 
@@ -334,7 +345,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onMove, onDelete }) =>
   const handleMove = (column: string): void => {
     onMove(task.id, column);
   };
-  
+
   return <div onClick={() => handleMove('done')}>Move</div>;
 };
 
@@ -343,7 +354,7 @@ export const TaskCard = ({ task, onMove, onDelete }: any) => {
   const handleMove = (column) => {
     onMove(task.id, column);
   };
-  
+
   return <div onClick={() => handleMove('done')}>Move</div>;
 };
 ```
@@ -351,6 +362,7 @@ export const TaskCard = ({ task, onMove, onDelete }: any) => {
 ### 4.2 Type Patterns
 
 **Optional Props:**
+
 ```typescript
 // ✅ GOOD: Use optional marker in interface
 interface TaskProps {
@@ -372,9 +384,10 @@ export const Task: React.FC<TaskProps> = ({ title, description, dueDate }) => {
 ```
 
 **Union Types (for variants):**
+
 ```typescript
 // ✅ GOOD: Discriminated union for type safety
-type TaskStatus = 'todo' | 'inProgress' | 'done';
+type TaskStatus = "todo" | "inProgress" | "done";
 
 interface Task {
   id: string;
@@ -385,19 +398,23 @@ interface Task {
 // ✅ GOOD: Use type guard for narrowing
 function getStatusLabel(status: TaskStatus): string {
   switch (status) {
-    case 'todo': return 'To Do';
-    case 'inProgress': return 'In Progress';
-    case 'done': return 'Done';
+    case "todo":
+      return "To Do";
+    case "inProgress":
+      return "In Progress";
+    case "done":
+      return "Done";
   }
 }
 ```
 
 **Generics (for reusable utilities):**
+
 ```typescript
 // ✅ GOOD: Generic hook for reusable persistence
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(initialValue);
   // ...
@@ -405,7 +422,7 @@ export function useLocalStorage<T>(
 }
 
 // Usage is type-safe:
-const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
+const [tasks, setTasks] = useLocalStorage<Task[]>("tasks", []);
 ```
 
 ### 4.3 Type Hierarchy
@@ -414,8 +431,8 @@ const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
 // ✅ GOOD: Clear type hierarchy
 
 // Core domain types
-type TaskId = string & { readonly __brand: 'TaskId' };
-type ColumnId = 'todo' | 'inProgress' | 'done';
+type TaskId = string & { readonly __brand: "TaskId" };
+type ColumnId = "todo" | "inProgress" | "done";
 
 interface Task {
   id: TaskId;
@@ -452,25 +469,25 @@ interface BoardProps {
 
 ### 5.1 When to Comment
 
-| Scenario | Do This | Example |
-|---|---|---|
-| **Complex logic** | Explain the "why", not the "what" | `// Debounce save to reduce localStorage writes` |
-| **Non-obvious intent** | Add JSDoc for public functions | `/** Validates task title and returns error msg or null */` |
-| **Edge case handling** | Document assumptions | `// If localStorage unavailable, tasks persist in-memory only (UC-01 alternate flow)` |
-| **TODO/FIXME** | Link to story or issue | `// TODO: implement auto-save (US-004.02)` |
-| **Obvious code** | Don't comment | `const isValid = title.length > 0; // ✅ No comment needed` |
+| Scenario               | Do This                           | Example                                                                               |
+| ---------------------- | --------------------------------- | ------------------------------------------------------------------------------------- |
+| **Complex logic**      | Explain the "why", not the "what" | `// Debounce save to reduce localStorage writes`                                      |
+| **Non-obvious intent** | Add JSDoc for public functions    | `/** Validates task title and returns error msg or null */`                           |
+| **Edge case handling** | Document assumptions              | `// If localStorage unavailable, tasks persist in-memory only (UC-01 alternate flow)` |
+| **TODO/FIXME**         | Link to story or issue            | `// TODO: implement auto-save (US-004.02)`                                            |
+| **Obvious code**       | Don't comment                     | `const isValid = title.length > 0; // ✅ No comment needed`                           |
 
 ### 5.2 JSDoc Format
 
-```typescript
+````typescript
 /**
  * Moves a task to a new column and persists the change.
- * 
+ *
  * @param taskId - The task to move
  * @param targetColumn - The destination column (must be valid)
  * @returns Promise that resolves when persistence is complete
  * @throws Error if taskId not found or targetColumn invalid
- * 
+ *
  * @example
  * ```
  * await moveTask('task-123', 'done');
@@ -478,13 +495,14 @@ interface BoardProps {
  */
 export async function moveTask(
   taskId: TaskId,
-  targetColumn: ColumnId
+  targetColumn: ColumnId,
 ): Promise<void> {
   // ...
 }
-```
+````
 
 **JSDoc Rules:**
+
 - Use for all **public** functions and components.
 - Include `@param`, `@returns`, `@throws` if applicable.
 - Add `@example` if behavior is non-obvious.
@@ -520,13 +538,13 @@ for (let i = 0; i < items.length; i++) { // Loop through items
 // ✅ GOOD: Try-catch with recovery
 export function loadTasksFromStorage(): Task[] {
   try {
-    const stored = localStorage.getItem('taskboard:state');
+    const stored = localStorage.getItem("taskboard:state");
     if (!stored) return [];
-    
+
     const parsed = JSON.parse(stored);
     return validateTasks(parsed.tasks) || [];
   } catch (error) {
-    console.error('Failed to load tasks from storage:', error);
+    console.error("Failed to load tasks from storage:", error);
     // Return empty board; user can recreate tasks
     return [];
   }
@@ -535,20 +553,20 @@ export function loadTasksFromStorage(): Task[] {
 // ✅ GOOD: Validate before use
 function validateTasks(data: unknown): Task[] | null {
   if (!Array.isArray(data)) return null;
-  
+
   return data.filter((item): item is Task => {
     return (
-      typeof item === 'object' &&
+      typeof item === "object" &&
       item !== null &&
-      typeof item.id === 'string' &&
-      typeof item.title === 'string'
+      typeof item.id === "string" &&
+      typeof item.title === "string"
     );
   });
 }
 
 // ❌ BAD: Silent failure
 function loadTasks() {
-  const data = JSON.parse(localStorage.getItem('taskboard:state'));
+  const data = JSON.parse(localStorage.getItem("taskboard:state"));
   return data.tasks; // Crashes if parse fails or data invalid
 }
 ```
@@ -556,9 +574,10 @@ function loadTasks() {
 ### 6.2 Error Messages
 
 **Rules:**
-- Be specific: *"localStorage quota exceeded (> 5MB)"* not *"error"*
-- Include context: *"Failed to save task 'task-123' to localStorage"*
-- Suggest recovery: *"Try clearing completed tasks or refresh browser"*
+
+- Be specific: _"localStorage quota exceeded (> 5MB)"_ not _"error"_
+- Include context: _"Failed to save task 'task-123' to localStorage"_
+- Suggest recovery: _"Try clearing completed tasks or refresh browser"_
 
 ```typescript
 // ✅ GOOD: Specific, actionable
@@ -568,26 +587,26 @@ try {
   if (error instanceof DOMException && error.code === 22) {
     // QuotaExceededError
     console.error(
-      'localStorage quota exceeded. Clear old tasks or refresh browser.'
+      "localStorage quota exceeded. Clear old tasks or refresh browser.",
     );
   } else {
-    console.error('Failed to persist task data:', error);
+    console.error("Failed to persist task data:", error);
   }
 }
 
 // ❌ BAD: Generic, unhelpful
-console.error('Storage error');
+console.error("Storage error");
 ```
 
 ### 6.3 Types of Errors
 
-| Type | Strategy | Example |
-|---|---|---|
-| **Validation** | Validate early, return null or error object | `validateTask()` returns error message or null |
-| **Storage** | Catch, log, fallback to in-memory | localStorage quota exceeded → keep in-memory state |
-| **Network** | N/A for MVP (no backend) | — |
-| **User action** | Show user-friendly UI message | "Task title is required" in form |
-| **Unknown** | Log with context, continue if possible | Unexpected JSON shape → skip invalid item |
+| Type            | Strategy                                    | Example                                            |
+| --------------- | ------------------------------------------- | -------------------------------------------------- |
+| **Validation**  | Validate early, return null or error object | `validateTask()` returns error message or null     |
+| **Storage**     | Catch, log, fallback to in-memory           | localStorage quota exceeded → keep in-memory state |
+| **Network**     | N/A for MVP (no backend)                    | —                                                  |
+| **User action** | Show user-friendly UI message               | "Task title is required" in form                   |
+| **Unknown**     | Log with context, continue if possible      | Unexpected JSON shape → skip invalid item          |
 
 ---
 
@@ -595,71 +614,76 @@ console.error('Storage error');
 
 ### 7.1 Coverage Requirements
 
-| Area | Minimum Coverage | Rationale |
-|---|---|---|
-| **Persistence (useLocalStorage)** | 90% | Critical path; storage failures break app |
-| **State management** | 85% | Core business logic |
-| **Utilities (formatDate, validate)** | 85% | Pure functions; deterministic |
-| **Components** | 70% | UI testing is slower; focus on logic |
-| **Hooks** | 80% | Side effects are error-prone |
+| Area                                 | Minimum Coverage | Rationale                                 |
+| ------------------------------------ | ---------------- | ----------------------------------------- |
+| **Persistence (useLocalStorage)**    | 90%              | Critical path; storage failures break app |
+| **State management**                 | 85%              | Core business logic                       |
+| **Utilities (formatDate, validate)** | 85%              | Pure functions; deterministic             |
+| **Components**                       | 70%              | UI testing is slower; focus on logic      |
+| **Hooks**                            | 80%              | Side effects are error-prone              |
 
-**Rule:** Coverage of *touched logic* must be ≥ 80% before story is considered Done (AGENTS.md §4).
+**Rule:** Coverage of _touched logic_ must be ≥ 80% before story is considered Done (AGENTS.md §4).
 
 ### 7.2 Test Structure
 
 ```typescript
 // ✅ GOOD: Clear arrange-act-assert, good naming
 
-import { renderHook, act } from '@testing-library/react';
-import { useLocalStorage } from './useLocalStorage';
+import { renderHook, act } from "@testing-library/react";
+import { useLocalStorage } from "./useLocalStorage";
 
-describe('useLocalStorage', () => {
+describe("useLocalStorage", () => {
   // Setup & teardown
   beforeEach(() => {
     localStorage.clear();
   });
-  
+
   afterEach(() => {
     localStorage.clear();
   });
-  
+
   // Test 1: Happy path
-  it('should persist and retrieve value from localStorage', () => {
-    const { result } = renderHook(() => useLocalStorage<string>('key', 'initial'));
-    
+  it("should persist and retrieve value from localStorage", () => {
+    const { result } = renderHook(() =>
+      useLocalStorage<string>("key", "initial"),
+    );
+
     act(() => {
-      result.current.setValue('updated');
+      result.current.setValue("updated");
     });
-    
-    expect(localStorage.getItem('key')).toBe(JSON.stringify('updated'));
-    expect(result.current.value).toBe('updated');
+
+    expect(localStorage.getItem("key")).toBe(JSON.stringify("updated"));
+    expect(result.current.value).toBe("updated");
   });
-  
+
   // Test 2: Edge case — error handling
-  it('should handle corrupted localStorage gracefully', () => {
-    localStorage.setItem('key', 'not-valid-json');
-    
-    const { result } = renderHook(() => useLocalStorage<string>('key', 'fallback'));
-    
-    expect(result.current.value).toBe('fallback');
+  it("should handle corrupted localStorage gracefully", () => {
+    localStorage.setItem("key", "not-valid-json");
+
+    const { result } = renderHook(() =>
+      useLocalStorage<string>("key", "fallback"),
+    );
+
+    expect(result.current.value).toBe("fallback");
   });
-  
+
   // Test 3: Error case
-  it('should recover when localStorage quota is exceeded', () => {
-    const { result } = renderHook(() => useLocalStorage<string>('key', ''));
-    
-    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+  it("should recover when localStorage quota is exceeded", () => {
+    const { result } = renderHook(() => useLocalStorage<string>("key", ""));
+
+    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("QuotaExceededError", "QuotaExceededError");
     });
-    
+
     expect(() => {
-      act(() => result.current.setValue('large-value'));
+      act(() => result.current.setValue("large-value"));
     }).not.toThrow();
   });
 });
 ```
 
 **Test Organization Rules:**
+
 1. **Describe block** per module/hook
 2. **Setup/teardown** in beforeEach/afterEach
 3. **Test name** describes behavior, not implementation
@@ -668,23 +692,23 @@ describe('useLocalStorage', () => {
 
 ### 7.3 Test Naming
 
-| Pattern | Example | When |
-|---|---|---|
-| `should [verb] when [condition]` | `should save task when title is valid` | Most common |
-| `should [verb]` | `should return empty array` | Simple behavior |
-| `should throw [error] when [condition]` | `should throw error when title is empty` | Error cases |
-| `should handle [scenario]` | `should handle localStorage quota exceeded` | Complex scenarios |
+| Pattern                                 | Example                                     | When              |
+| --------------------------------------- | ------------------------------------------- | ----------------- |
+| `should [verb] when [condition]`        | `should save task when title is valid`      | Most common       |
+| `should [verb]`                         | `should return empty array`                 | Simple behavior   |
+| `should throw [error] when [condition]` | `should throw error when title is empty`    | Error cases       |
+| `should handle [scenario]`              | `should handle localStorage quota exceeded` | Complex scenarios |
 
 ```typescript
 // ✅ GOOD: Clear, action-oriented
-it('should move task to done column and persist change', async () => { });
-it('should throw error when task ID not found', () => { });
-it('should restore board state from localStorage on app load', () => { });
+it("should move task to done column and persist change", async () => {});
+it("should throw error when task ID not found", () => {});
+it("should restore board state from localStorage on app load", () => {});
 
 // ❌ BAD: Vague or implementation-focused
-it('works', () => { });
-it('test move', () => { });
-it('modifies state and calls dispatch', () => { });
+it("works", () => {});
+it("test move", () => {});
+it("modifies state and calls dispatch", () => {});
 ```
 
 ### 7.4 Mocking Strategy
@@ -693,19 +717,19 @@ it('modifies state and calls dispatch', () => { });
 
 ```typescript
 // ✅ GOOD: Mock localStorage (external), not useLocalStorage internals
-jest.mock('localStorage', () => ({
+jest.mock("localStorage", () => ({
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
 }));
 
 // ✅ GOOD: Mock async API (not yet used, but pattern for future)
-jest.mock('api/taskService', () => ({
+jest.mock("api/taskService", () => ({
   fetchTasks: jest.fn().mockResolvedValue([]),
 }));
 
 // ❌ BAD: Over-mocking; testing the mock, not the code
-jest.mock('useLocalStorage', () => ({
+jest.mock("useLocalStorage", () => ({
   useLocalStorage: jest.fn().mockReturnValue([null, jest.fn()]),
 }));
 // This defeats the purpose of the test!
@@ -756,6 +780,7 @@ prettier --write src/
 ```
 
 **ESLint Config (Recommended):**
+
 ```json
 {
   "extends": [
@@ -777,13 +802,13 @@ prettier --write src/
 
 ### 9.1 React Performance
 
-| Guideline | Reason | Example |
-|---|---|---|
-| Use `React.memo` for pure components | Prevent unnecessary re-renders | `export const TaskCard = React.memo(({ task }) => ...)` |
-| Use `useCallback` for handler closures | Maintain referential equality for deps | `const handleMove = useCallback(() => {}, [deps])` |
-| Use `useMemo` for expensive computations | Avoid recalculating on every render | `const sorted = useMemo(() => sort(tasks), [tasks])` |
-| Avoid inline objects as props | Breaks memo due to new reference | ❌ `<Task config={{ color: 'red' }} />` |
-| Batch state updates | Reduce render cycles | Use `useTransition` or update reducer |
+| Guideline                                | Reason                                 | Example                                                 |
+| ---------------------------------------- | -------------------------------------- | ------------------------------------------------------- |
+| Use `React.memo` for pure components     | Prevent unnecessary re-renders         | `export const TaskCard = React.memo(({ task }) => ...)` |
+| Use `useCallback` for handler closures   | Maintain referential equality for deps | `const handleMove = useCallback(() => {}, [deps])`      |
+| Use `useMemo` for expensive computations | Avoid recalculating on every render    | `const sorted = useMemo(() => sort(tasks), [tasks])`    |
+| Avoid inline objects as props            | Breaks memo due to new reference       | ❌ `<Task config={{ color: 'red' }} />`                 |
+| Batch state updates                      | Reduce render cycles                   | Use `useTransition` or update reducer                   |
 
 ```typescript
 // ✅ GOOD: Memoized component + callback
@@ -796,14 +821,14 @@ export const TaskCard = React.memo(({ task, onMove }: TaskCardProps) => {
   const handleMove = useCallback(() => {
     onMove(task.id);
   }, [task.id, onMove]);
-  
+
   return <div onClick={handleMove}>{task.title}</div>;
 });
 
 // ❌ BAD: Inline object, new handler every render
 export const TaskCard = ({ task, onMove }: TaskCardProps) => {
   const config = { color: 'red' }; // New object every render!
-  
+
   return (
     <div onClick={() => onMove(task.id)}> {/* New function every render! */}
       {task.title}
@@ -814,11 +839,11 @@ export const TaskCard = ({ task, onMove }: TaskCardProps) => {
 
 ### 9.2 Storage Performance
 
-| Guideline | Target | Notes |
-|---|---|---|
-| Serialize board state at most once per action | < 10ms | Batch writes; debounce if needed |
-| Load state on mount in < 50ms | < 50ms | For 300 tasks typical |
-| Keep total board size < 1MB | < 1MB | Roughly 5000 tasks; well within quota |
+| Guideline                                     | Target | Notes                                 |
+| --------------------------------------------- | ------ | ------------------------------------- |
+| Serialize board state at most once per action | < 10ms | Batch writes; debounce if needed      |
+| Load state on mount in < 50ms                 | < 50ms | For 300 tasks typical                 |
+| Keep total board size < 1MB                   | < 1MB  | Roughly 5000 tasks; well within quota |
 
 ---
 
@@ -837,7 +862,7 @@ const TaskCard = ({ task, onMove }: TaskCardProps) => {
       e.preventDefault();
     }
   };
-  
+
   return (
     <div
       role="button"
@@ -867,16 +892,16 @@ const TaskCard = ({ task, onMove }: TaskCardProps) => {
 
 ## 11. Common Pitfalls & How to Avoid
 
-| Pitfall | Problem | Solution |
-|---|---|---|
-| Calling `localStorage` directly | Breaks encapsulation; hard to test | Always use `useLocalStorage` hook |
-| Using `any` type | Defeats TypeScript; causes runtime errors | Use `unknown` then narrow, or `<T>` generic |
-| Side effects outside `useEffect` | Can run on every render; memory leaks | Keep all side effects in `useEffect` |
-| Inline event handlers | New function every render; breaks memo | Use `useCallback` or move to named function |
-| Missing error handling | Silent failures; user confusion | Always wrap I/O in try-catch; log errors |
-| Not testing edge cases | Missing bugs in production | Write tests for happy path + edge cases + errors |
-| Importing from deep paths | Brittle; refactoring is painful | Use absolute imports via `tsconfig` paths |
-| Ambiguous prop names | Hard to understand intent | Use `handle*` for event handlers, `on*` for callbacks |
+| Pitfall                          | Problem                                   | Solution                                              |
+| -------------------------------- | ----------------------------------------- | ----------------------------------------------------- |
+| Calling `localStorage` directly  | Breaks encapsulation; hard to test        | Always use `useLocalStorage` hook                     |
+| Using `any` type                 | Defeats TypeScript; causes runtime errors | Use `unknown` then narrow, or `<T>` generic           |
+| Side effects outside `useEffect` | Can run on every render; memory leaks     | Keep all side effects in `useEffect`                  |
+| Inline event handlers            | New function every render; breaks memo    | Use `useCallback` or move to named function           |
+| Missing error handling           | Silent failures; user confusion           | Always wrap I/O in try-catch; log errors              |
+| Not testing edge cases           | Missing bugs in production                | Write tests for happy path + edge cases + errors      |
+| Importing from deep paths        | Brittle; refactoring is painful           | Use absolute imports via `tsconfig` paths             |
+| Ambiguous prop names             | Hard to understand intent                 | Use `handle*` for event handlers, `on*` for callbacks |
 
 ---
 

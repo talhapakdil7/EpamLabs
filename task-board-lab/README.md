@@ -104,15 +104,15 @@ src/
 
 ```typescript
 interface Task {
-  id: string;              // UUID
-  title: string;           // Required
-  description?: string;    // Optional
-  projectTag?: string;     // Optional - supports US-004.01
-  dueDate?: string;        // Optional (ISO8601)
-  column: 'todo' | 'inProgress' | 'done';
-  order: number;           // Position within column
-  createdAt: string;       // ISO8601 timestamp
-  updatedAt: string;       // ISO8601 timestamp
+  id: string; // UUID
+  title: string; // Required
+  description?: string; // Optional
+  projectTag?: string; // Optional - supports US-004.01
+  dueDate?: string; // Optional (ISO8601)
+  column: "todo" | "inProgress" | "done";
+  order: number; // Position within column
+  createdAt: string; // ISO8601 timestamp
+  updatedAt: string; // ISO8601 timestamp
 }
 ```
 
@@ -121,8 +121,8 @@ interface Task {
 ```typescript
 interface BoardState {
   tasks: Task[];
-  columnOrder: Array<'todo' | 'inProgress' | 'done'>;
-  filterProject?: string;  // For EPIC-004
+  columnOrder: Array<"todo" | "inProgress" | "done">;
+  filterProject?: string; // For EPIC-004
 }
 ```
 
@@ -147,10 +147,13 @@ All persistence operations go through the `useLocalStorage` hook. Components mus
 
 ```typescript
 // ✅ Correct
-const [boardState, setBoardState] = useLocalStorage('task-board-state', initialState);
+const [boardState, setBoardState] = useLocalStorage(
+  "task-board-state",
+  initialState,
+);
 
 // ❌ Wrong - don't do this
-localStorage.getItem('task-board-state');
+localStorage.getItem("task-board-state");
 ```
 
 ## Specification Documents

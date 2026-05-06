@@ -12,6 +12,7 @@
 Implemented **US-004.01: Add Project Tag During Task Creation** along with the required **EPIC-001: Board Foundation** to deliver a complete, working Personal Task Board with project tagging support.
 
 **Total Implementation:**
+
 - Foundation: EPIC-001 (Board, CRUD, localStorage persistence)
 - Feature: US-004.01 (Project tag support with all acceptance criteria)
 
@@ -20,22 +21,26 @@ Implemented **US-004.01: Add Project Tag During Task Creation** along with the r
 ## Acceptance Criteria - All Met ✅
 
 ### AC-1: Optional project tag field in form
+
 - ✅ **TaskForm** includes projectTag input field (line 67-77)
 - ✅ Field is optional - form can be submitted without it
 - ✅ Placeholder text guides users
 
 ### AC-2: Project tag saved and displayed
+
 - ✅ **Task** type includes `projectTag?: string` field
 - ✅ **TaskBoard** preserves projectTag during task creation (line 42-45)
 - ✅ **TaskCard** displays projectTag as blue badge (line 30-33)
 - ✅ Tags persist to localStorage via `useLocalStorage` hook
 
 ### AC-3: Tasks without tag work normally
+
 - ✅ projectTag is optional in Task type
 - ✅ `trimProjectTag()` returns undefined for empty/whitespace-only input
 - ✅ TaskCard handles undefined projectTag gracefully
 
 ### AC-4: Whitespace trimmed from tags
+
 - ✅ **trimProjectTag()** utility function handles:
   - Leading spaces: `"  web-app"` → `"web-app"`
   - Trailing spaces: `"web-app  "` → `"web-app"`
@@ -80,6 +85,7 @@ task-board-lab/
 ## Key Files & Implementations
 
 ### 1. Task Type Extension (US-004.01)
+
 **File:** `src/types/task.types.ts`
 
 ```typescript
@@ -87,9 +93,9 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  projectTag?: string;        // ✅ US-004.01 support
+  projectTag?: string; // ✅ US-004.01 support
   dueDate?: string;
-  column: 'todo' | 'inProgress' | 'done';
+  column: "todo" | "inProgress" | "done";
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -97,6 +103,7 @@ export interface Task {
 ```
 
 ### 2. Project Tag Trimming Utility (AC-4)
+
 **File:** `src/utils/helpers.ts`
 
 ```typescript
@@ -108,6 +115,7 @@ export function trimProjectTag(tag: string | undefined): string | undefined {
 ```
 
 ### 3. Task Form with Project Tag (AC-1)
+
 **File:** `src/components/TaskForm.tsx` (lines 67-77)
 
 ```typescript
@@ -127,6 +135,7 @@ export function trimProjectTag(tag: string | undefined): string | undefined {
 ```
 
 ### 4. Project Tag Display (AC-2)
+
 **File:** `src/components/TaskCard.tsx` (lines 30-33)
 
 ```typescript
@@ -138,12 +147,13 @@ export function trimProjectTag(tag: string | undefined): string | undefined {
 ```
 
 ### 5. Task Creation with Tag Persistence (AC-2)
+
 **File:** `src/components/TaskBoard.tsx` (lines 42-45)
 
 ```typescript
 const newTask: Task = {
   id: generateId(),
-  title: taskData.title || '',
+  title: taskData.title || "",
   projectTag: taskData.projectTag, // ✅ US-004.01: AC-2
   // ... other fields
 };
@@ -187,6 +197,7 @@ const newTask: Task = {
    - Type safety ✅
 
 **Test Results:**
+
 ```
 ✓ src/specs/us-004.01.test.ts (8)
 ✓ src/utils/helpers.test.ts (14)
@@ -202,23 +213,27 @@ Tests  30 passed (30)
 ## Usage
 
 ### Installation
+
 ```bash
 npm install
 ```
 
 ### Development
+
 ```bash
 npm run dev
 # Opens at http://localhost:5173
 ```
 
 ### Testing
+
 ```bash
 npm test          # Watch mode
 npm test -- --run # Single run
 ```
 
 ### Build
+
 ```bash
 npm run build
 # Production artifact in dist/
@@ -255,21 +270,25 @@ npm run build
 ## Code Quality
 
 ✅ **TypeScript Strict Mode**
+
 - No `any` types
 - All functions properly typed
 - Type-safe task operations
 
 ✅ **Code Organization**
+
 - Clear separation of concerns
 - Reusable hooks and utilities
 - Component-based architecture
 
 ✅ **Documentation**
+
 - Inline comments on key logic
 - Specification mapping comments (AC-1, AC-2, etc.)
 - README with feature overview
 
 ✅ **Testing**
+
 - Unit tests for helpers
 - Specification tests for acceptance criteria
 - Integration test framework in place
@@ -280,12 +299,12 @@ npm run build
 
 All code is traceable back to specifications:
 
-| Spec Document | Component | Implementation |
-|---|---|---|
-| **US-004.01** | TaskForm | projectTag input field (AC-1) |
+| Spec Document | Component           | Implementation                      |
+| ------------- | ------------------- | ----------------------------------- |
+| **US-004.01** | TaskForm            | projectTag input field (AC-1)       |
 | **US-004.01** | TaskBoard, TaskCard | projectTag storage & display (AC-2) |
-| **US-004.01** | helpers.ts | trimProjectTag() function (AC-4) |
-| **EPIC-001** | All components | Task CRUD, localStorage, columns |
+| **US-004.01** | helpers.ts          | trimProjectTag() function (AC-4)    |
+| **EPIC-001**  | All components      | Task CRUD, localStorage, columns    |
 
 ---
 
