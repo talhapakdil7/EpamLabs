@@ -1,0 +1,4 @@
+[submodule "speckit-lab"]
+	path = speckit-lab
+	url = https://github.com/talhapakdil7/speckit-lab.git
+	branch = 001-user-auth-system
